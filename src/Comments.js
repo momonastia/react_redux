@@ -26,8 +26,6 @@ function Comments(props) {
     dispatch(commentCreate(textComment, id));
   };
 
-  console.log("COMMENTS >>>", comments);
-
   return (
     <div className="card-comments">
       <form onSubmit={handleSubmit} className="comments-item-create">
