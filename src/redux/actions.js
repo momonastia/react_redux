@@ -8,6 +8,8 @@ import {
   COMMENTS_LOAD,
   LOADER_DISPLAY_ON,
   LOADER_DISPLAY_OFF,
+  ERROR_DISPLAY_OFF,
+  ERROR_DISPLAY_ON,
 } from "./types";
 
 export function incrementLikes() {
@@ -62,20 +64,44 @@ export function loaderOff() {
   };
 }
 
-export function commentsLoad() {
-  return async (dispatch) => {
-    dispatch(loaderOn());
-    const response = await fetch(
-      "https://jsonplaceholder.typicode.com/comments?_limit=10"
-    );
-    const jsonData = await response.json();
+export function ErrorOn(text) {
+  return (dispatch) => {
+    dispatch({
+      type: ERROR_DISPLAY_ON,
+      text,
+    });
 
     setTimeout(() => {
-      dispatch({
-        type: COMMENTS_LOAD,
-        data: jsonData,
-      });
+      dispatch(ErrorOff());
+    }, 2000);
+  };
+}
+
+export function ErrorOff() {
+  return {
+    type: ERROR_DISPLAY_OFF,
+  };
+}
+
+export function commentsLoad() {
+  return async (dispatch) => {
+    try {
+      dispatch(loaderOn());
+      const response = await fetch(
+        "https://sonplaceholder.typicode.com/comments?_limit=10"
+      );
+      const jsonData = await response.json();
+
+      setTimeout(() => {
+        dispatch({
+          type: COMMENTS_LOAD,
+          data: jsonData,
+        });
+        dispatch(loaderOff());
+      }, 1000);
+    } catch (err) {
+      dispatch(ErrorOn("API error"));
       dispatch(loaderOff());
-    }, 1000);
+    }
   };
 }
